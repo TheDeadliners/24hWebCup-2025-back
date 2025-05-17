@@ -36,4 +36,19 @@ readonly class MailService
 
         $this->mailer->send($email);
     }
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function sendForgotMail(User $user): void {
+        $email = new Email();
+        $email
+            ->from(new Address("no-reply@deadliners.lareunion.webcup.hodi.host", name: "TheEnd.page - Deadliners"))
+            ->to(new Address($user->getEmail(), name: $user->getFirstname() . " " . $user->getLastname()))
+            ->subject('TheEnd.page - Deadliners - Mot de passe oublié sur TheEnd.page')
+            ->html($this->twig->render('forgot.html.twig', ["user" => $user, "token" => base64_encode($user->getId())]));
+        ;
+
+        $this->mailer->send($email);
+    }
 }

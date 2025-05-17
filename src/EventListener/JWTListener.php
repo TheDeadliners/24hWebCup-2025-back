@@ -23,6 +23,7 @@ class JWTListener
         if ($user instanceof User) {
             $payload["firstname"] = $user->getFirstname();
             $payload["lastname"] = $user->getLastname();
+            $payload["created_at"] = $user->getCreatedAt()->getTimestamp();
         }
 
         $event->setData($payload);

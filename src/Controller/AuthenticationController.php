@@ -134,19 +134,59 @@ class AuthenticationController extends AbstractController
         }
     }
 
+    #[Route('/forgot-password', name: 'forgot-password', methods: ['POST'])]
+    public function forgot(Request $request, EntityManagerInterface $entityManager, MailService $mailService): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent());
+
+            $user = $entityManager->getRepository(User::class)->findOneBy(["email" => $data->email]);
+
+            if (! is_null($user)) {
+                if ($_ENV["APP_ENV"] == "prod") {
+                    $mailService->sendForgotPasswordMail($user);
+                }
+
+                return new JsonResponse(
+                    data: [
+                        "message" => "Un lien a été envoyé !"
+                    ],
+                    status: Response::HTTP_OK,
+                    json: false
+                );
+            } else {
+                return new JsonResponse(
+                    data: [
+                        "message" => "Inscription terminée !"
+                    ],
+                    status: Response::HTTP_BAD_REQUEST,
+                    json: false
+                );
+            }
+        } catch (Exception $exception) {
+            return new JsonResponse(
+                data: [
+                    "message" => $exception->getMessage(),
+                ],
+                status: Response::HTTP_BAD_REQUEST,
+                json: false
+            );
+        }
+    }
+
     #[Route('/edit-account', name: 'edit_account', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function edit_account(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         try {
             $user = $entityManager->getRepository(User::class)->find($this->getUser());
+
             $data = json_decode($request->getContent());
 
             if ($passwordHasher->isPasswordValid($user, $data->currentPassword)) {
                 $user
                     ->setFirstname($data->firstname)
                     ->setLastname($data->lastname)
-                    ->setUsername($data->username)
                 ;
 
                 $entityManager->persist($user);
@@ -168,6 +208,47 @@ class AuthenticationController extends AbstractController
                 status: Response::HTTP_BAD_REQUEST,
                 json: false
             );
+        } catch (Exception $exception) {
+            return new JsonResponse(
+                data: [
+                    "message" => $exception->getMessage(),
+                ],
+                status: Response::HTTP_BAD_REQUEST,
+                json: false
+            );
+        }
+    }
+
+
+    #[Route('/reset-password', name: 'reset_password', methods: ['POST'])]
+    public function reset_password(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent());
+
+            $user = $entityManager->getRepository(User::class)->find(base64_decode($data->token));
+
+            if (! is_null($user)) {
+                $user->setPassword($passwordHasher->hashPassword($user, $data->confirmPassword));
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                return new JsonResponse(
+                    data: [
+                        "message" => "Mot de passe modifié."
+                    ],
+                    status: Response::HTTP_OK,
+                    json: false
+                );
+            } else {
+                return new JsonResponse(
+                    data: [
+                        "message" => "Utilisateur introuvable."
+                    ],
+                    status: Response::HTTP_BAD_REQUEST,
+                    json: false
+                );
+            }
         } catch (Exception $exception) {
             return new JsonResponse(
                 data: [
