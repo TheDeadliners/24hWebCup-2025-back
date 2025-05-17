@@ -2,15 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Service\MailService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api', name: 'api_')]
+#[Route('/test', name: 'test_')]
 final class TestController extends AbstractController
 {
-    #[Route('/test', name: 'post_test', methods: ["POST"])]
+    #[Route('', name: 'post', methods: ["POST"])]
     public function post_test(Request $request): JsonResponse
     {
         return new JsonResponse(data: [
@@ -22,9 +24,29 @@ final class TestController extends AbstractController
             ]
         ]);
     }
-    #[Route('/test', name: 'get_test', methods: ["GET"])]
+    #[Route('', name: 'get', methods: ["GET"])]
     public function get_test(): JsonResponse
     {
+        return new JsonResponse(data: [
+            "status" => "success",
+            "data" => [
+                "context" => "GET request",
+                "message" => "It's working!",
+            ]
+        ]);
+    }
+
+    #[Route('/mail', name: 'mail', methods: ["GET"])]
+    public function get_mail(MailService $mailService): JsonResponse
+    {
+        $user = new User();
+        $user
+            ->setEmail("deadliners@yopmail.com")
+            ->setFirstname("Dead")
+            ->setLastname("Liners")
+        ;
+
+        $mailService->sendRegistrationMail($user);
         return new JsonResponse(data: [
             "status" => "success",
             "data" => [
