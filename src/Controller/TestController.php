@@ -47,6 +47,7 @@ final class TestController extends AbstractController
         ;
 
         $mailService->sendRegistrationMail($user);
+
         return new JsonResponse(data: [
             "status" => "success",
             "data" => [

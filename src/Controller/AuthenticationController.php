@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -55,7 +56,7 @@ class AuthenticationController extends AbstractController
     }
 
     #[Route('/register', name: 'register', methods: ['POST'])]
-    public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, MailService $mailService): JsonResponse
     {
         try {
             $user = new User();
@@ -71,9 +72,13 @@ class AuthenticationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            if ($_ENV["APP_ENV"] == "prod") {
+                $mailService->sendRegistrationMail($user);
+            }
+
             return new JsonResponse(
                 data: [
-                    "message" => "Inscription terminée, bienvenue " . ucfirst($data->firstname) . " !"
+                    "message" => "Inscription terminée !"
                 ],
                 status: Response::HTTP_OK,
                 json: false
