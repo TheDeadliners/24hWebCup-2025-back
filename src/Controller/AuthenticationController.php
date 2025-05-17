@@ -144,7 +144,7 @@ class AuthenticationController extends AbstractController
 
             if (! is_null($user)) {
                 if ($_ENV["APP_ENV"] == "prod") {
-                    $mailService->sendForgotPasswordMail($user);
+                    $mailService->sendForgotMail($user);
                 }
 
                 return new JsonResponse(
@@ -157,7 +157,7 @@ class AuthenticationController extends AbstractController
             } else {
                 return new JsonResponse(
                     data: [
-                        "message" => "Inscription terminée !"
+                        "message" => "Utilisateur introuvable"
                     ],
                     status: Response::HTTP_BAD_REQUEST,
                     json: false
