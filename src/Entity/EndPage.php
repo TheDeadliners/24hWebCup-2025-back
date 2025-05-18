@@ -25,21 +25,11 @@ class EndPage
     #[ORM\Column]
     private ?DateTimeImmutable $createdAt = null;
 
-    public function getCreatedAt(): ?DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(?DateTimeImmutable $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(length: 500, nullable: true)]
-    private ?string $musique = null;
+    private ?string $music = null;
 
     #[ORM\Column(length: 1000)]
     private ?string $background = null;
@@ -49,6 +39,9 @@ class EndPage
 
     #[ORM\ManyToOne(inversedBy: 'endPages')]
     private ?User $user = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $title = null;
 
     public function __construct()
     {
@@ -96,14 +89,14 @@ class EndPage
         return $this;
     }
 
-    public function getMusique(): ?string
+    public function getMusic(): ?string
     {
-        return $this->musique;
+        return $this->music;
     }
 
-    public function setMusique(?string $musique): static
+    public function setMusic(?string $music): static
     {
-        $this->musique = $musique;
+        $this->music = $music;
 
         return $this;
     }
@@ -140,6 +133,28 @@ class EndPage
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }
