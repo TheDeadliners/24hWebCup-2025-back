@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\EndPage;
+use App\Entity\User;
 use App\Repository\EndPageRepository;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
@@ -127,14 +128,15 @@ final class EndPageController extends AbstractController
         try{
             $endPage = new EndPage();
 
+
+            $user = $entityManager->getRepository(User::class)->find($this->getUser());
+
             $data = json_decode($request->getContent());
             $endPage
+                ->setUser($user)
                 ->setTitle($data->title)
                 ->setCategory($data->category)
                 ->setText($data->text)
-                ->setCreatedAt(new DateTimeImmutable($data->createdAt))
-                ->setImage($data->image)
-                ->setMusic($data->music)
                 ->setBackground($data->background)
                 ->setGif($data->gif)
                 ;
@@ -159,65 +161,13 @@ final class EndPageController extends AbstractController
         }
     }
 
-    #[Route('/view', name: 'view', methods: ['POST'])]
-    public function view(Request $request, EndPageRepository $endPageRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $data = json_decode($request->getContent());
-        $endPage = $endPageRepository->find($data->id);
-        if (!is_null($endPage)) {
-            $endPage->setViews($endPage->getViews() + 1);
-            $entityManager->persist($endPage);
-            $entityManager->flush();
-
-            $serialized_endpage = $serializer->serialize($endPage ,format: "json", context: ["groups" => "endpage:view"]);
-
-            return new JsonResponse(
-                data: json_decode($serialized_endpage),
-                status: Response::HTTP_OK,
-                json: false
-            );
-        } else {
-            return new JsonResponse(
-                data: [
-                    "message" => "EndPage introuvable"
-                ],
-                status: Response::HTTP_BAD_REQUEST,
-                json: false
-            );
-        }
-    }
-
-    #[Route('/my_endpages', name: 'get_all_my_end', methods: ['GET'])]
+    #[Route('/my-endpages', name: 'get_all_my_end', methods: ['GET'])]
     public function get_all(SerializerInterface $serializer, EndPageRepository $endPageRepository, UserRepository $userRepository): Response
     {
         try{
             $user = $userRepository->find($this->getUser());
             $paginationSize = 10;
-            $pages = array_chunk($endPageRepository->findBy(["user" => $user]), $paginationSize);
-
-            $endpages = $serializer->serialize($pages, format: "json", context: ["groups" => "endpage:view"]);
-            return new JsonResponse(
-                data: json_decode($endpages),
-                status: Response::HTTP_OK,
-                json: false
-            );
-        } catch (Exception $exception) {
-            return new JsonResponse(
-                data: [
-                    "message" => $exception->getMessage(),
-                ],
-                status: Response::HTTP_BAD_REQUEST,
-                json: false
-            );
-        }
-    }
-
-    #[Route('/leaderboard', name: 'leaderboard', methods: ['GET'])]
-    public function leaderboard(SerializerInterface $serializer, EndPageRepository $endPageRepository): Response
-    {
-        try{
-            $paginationSize = 10;
-            $pages = array_chunk($endPageRepository->findBy([], orderBy: ["likes" => "desc"], limit: 10), $paginationSize);
+            $pages = array_chunk($endPageRepository->findBy(["user" => $user]), $paginationSize)[0];
 
             $endpages = $serializer->serialize($pages, format: "json", context: ["groups" => "endpage:view"]);
             return new JsonResponse(

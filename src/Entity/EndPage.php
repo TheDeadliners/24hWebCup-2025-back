@@ -16,34 +16,34 @@ class EndPage
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?Uuid $id;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?string $category = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?string $text = null;
     #[ORM\Column]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::TEXT, nullable:  true)]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["endpage:view"])]
-    private ?string $music = null;
+    #[Groups(["endpage:view", "endpage:solo"])]
+    private ?string $music = "";
 
     #[ORM\Column(length: 255)]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?string $background = null;
 
     #[ORM\Column(type: Types::TEXT, nullable:  true)]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?string $gif = null;
 
     #[ORM\ManyToOne(inversedBy: 'endPages')]
@@ -51,15 +51,15 @@ class EndPage
     private ?User $user = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?string $title = null;
 
     #[ORM\Column]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?int $views = 0;
 
     #[ORM\Column]
-    #[Groups(["endpage:view"])]
+    #[Groups(["endpage:view", "endpage:solo"])]
     private ?int $likes = 0;
 
     public function __construct()
