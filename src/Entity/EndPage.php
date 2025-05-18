@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EndPageRepository::class)]
@@ -15,38 +16,50 @@ class EndPage
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[Groups(["endpage:view"])]
     private ?Uuid $id;
 
-    #[ORM\Column(length: 1000)]
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["endpage:view"])]
     private ?string $category = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["endpage:view"])]
     private ?string $text = null;
     #[ORM\Column]
+    #[Groups(["endpage:view"])]
     private ?DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 500, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable:  true)]
+    #[Groups(["endpage:view"])]
     private ?string $image = null;
 
-    #[ORM\Column(length: 500, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["endpage:view"])]
     private ?string $music = null;
 
-    #[ORM\Column(length: 1000)]
+    #[ORM\Column(length: 255)]
+    #[Groups(["endpage:view"])]
     private ?string $background = null;
 
-    #[ORM\Column(length: 500, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable:  true)]
+    #[Groups(["endpage:view"])]
     private ?string $gif = null;
 
     #[ORM\ManyToOne(inversedBy: 'endPages')]
+    #[Groups(["endpage:view"])]
     private ?User $user = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(["endpage:view"])]
     private ?string $title = null;
 
     #[ORM\Column]
+    #[Groups(["endpage:view"])]
     private ?int $views = 0;
 
     #[ORM\Column]
+    #[Groups(["endpage:view"])]
     private ?int $likes = 0;
 
     public function __construct()

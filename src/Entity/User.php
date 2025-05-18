@@ -20,6 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[Groups(["endpage:view"])]
     private ?Uuid $id;
 
     #[ORM\Column(length: 180)]
@@ -43,9 +44,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(["endpage:view"])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(["endpage:view"])]
     private ?string $lastname = null;
 
     #[ORM\Column]
