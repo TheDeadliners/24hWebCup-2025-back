@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -49,10 +51,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isBlocked = false;
 
+    /**
+     * @var Collection<int, EndPage>
+     */
+    #[ORM\OneToMany(targetEntity: EndPage::class, mappedBy: 'user')]
+    private Collection $endPages;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
         $this->createdAt = new DateTimeImmutable("now");
+        $this->endPages = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -173,6 +182,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBlocked(bool $isBlocked): static
     {
         $this->isBlocked = $isBlocked;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EndPage>
+     */
+    public function getEndPages(): Collection
+    {
+        return $this->endPages;
+    }
+
+    public function addEndPage(EndPage $endPage): static
+    {
+        if (!$this->endPages->contains($endPage)) {
+            $this->endPages->add($endPage);
+            $endPage->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEndPage(EndPage $endPage): static
+    {
+        if ($this->endPages->removeElement($endPage)) {
+            // set the owning side to null (unless already changed)
+            if ($endPage->getUser() === $this) {
+                $endPage->setUser(null);
+            }
+        }
 
         return $this;
     }
