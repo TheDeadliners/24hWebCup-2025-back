@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/end-pages', name: 'endpages_')]
@@ -51,8 +52,8 @@ final class EndPageController extends AbstractController
         }
     }
 
-    #[Route('', name: 'list', methods: ['POST'])]
-    public function endPagesIndex(Request $request,EntityManagerInterface $entityManager): Response
+    #[Route('', name: 'create', methods: ['POST'])]
+    public function endPagesCreate(Request $request,EntityManagerInterface $entityManager): Response
     {
         try{
             $endPage = new EndPage();
