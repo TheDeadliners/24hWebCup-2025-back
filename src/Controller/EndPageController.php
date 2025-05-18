@@ -211,4 +211,28 @@ final class EndPageController extends AbstractController
             );
         }
     }
+
+    #[Route('/leaderboard', name: 'leaderboard', methods: ['GET'])]
+    public function leaderboard(SerializerInterface $serializer, EndPageRepository $endPageRepository): Response
+    {
+        try{
+            $paginationSize = 10;
+            $pages = array_chunk($endPageRepository->findBy([], orderBy: ["likes" => "desc"], limit: 10), $paginationSize);
+
+            $endpages = $serializer->serialize($pages, format: "json", context: ["groups" => "endpage:view"]);
+            return new JsonResponse(
+                data: json_decode($endpages),
+                status: Response::HTTP_OK,
+                json: false
+            );
+        } catch (Exception $exception) {
+            return new JsonResponse(
+                data: [
+                    "message" => $exception->getMessage(),
+                ],
+                status: Response::HTTP_BAD_REQUEST,
+                json: false
+            );
+        }
+    }
 }
