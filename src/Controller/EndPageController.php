@@ -136,6 +136,7 @@ final class EndPageController extends AbstractController
                 ->setUser($user)
                 ->setTitle($data->title)
                 ->setCategory($data->category)
+                ->setLikes(rand(300, 500))
                 ->setText($data->text)
                 ->setBackground($data->background)
                 ->setGif($data->gif)
