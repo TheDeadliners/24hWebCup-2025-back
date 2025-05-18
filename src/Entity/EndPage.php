@@ -43,6 +43,12 @@ class EndPage
     #[ORM\Column(length: 50)]
     private ?string $title = null;
 
+    #[ORM\Column]
+    private ?int $views = 0;
+
+    #[ORM\Column]
+    private ?int $likes = 0;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -155,6 +161,30 @@ class EndPage
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getViews(): ?int
+    {
+        return $this->views;
+    }
+
+    public function setViews(int $views): static
+    {
+        $this->views = $views;
+
+        return $this;
+    }
+
+    public function getLikes(): ?int
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(int $likes): static
+    {
+        $this->likes = $likes;
 
         return $this;
     }
